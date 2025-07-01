@@ -2,7 +2,7 @@
 
 ***仅为个人仓库，码农working.......***
 
-<img src="readme.assets/image-20250701230458437.png" alt="image-20250701230458437" style="zoom:50%; float:left" />
+![微信图片_20250701230904](readme.assets/微信图片_20250701230904.jpg)
 
 ### ToDoList
 
