@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "agv_chassis_param.h": "c",
+        "struct_typedef.h": "c",
+        "remote_control.h": "c",
+        "cmath": "c"
+    }
+}
