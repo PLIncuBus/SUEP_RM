@@ -39,6 +39,7 @@ extern CAN_HandleTypeDef hcan2;
         (ptr)->given_current = (uint16_t)((data)[4] << 8 | (data)[5]);  \
         (ptr)->temperate = (data)[6];                                   \
     }
+
 /*
 motor data,  0:chassis motor1 3508;1:chassis motor3 3508;2:chassis motor3 3508;3:chassis motor4 3508;
 4:yaw gimbal motor 6020;5:pitch gimbal motor 6020;6:trigger motor 2006;
@@ -67,7 +68,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     uint8_t rx_data[8];
 
     HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, rx_data);
-
     switch (rx_header.StdId)
     {
         case CAN_3508_M1_ID:
@@ -87,7 +87,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         {
             break;
         }
-    }
+    }	
+	
+
 }
 /**
   * @brief          hal CAN fifo call back, receive motor data
@@ -105,7 +107,6 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
   uint8_t rx_data[8];
   HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &rx_header, rx_data);
 
-  
   switch (rx_header.StdId)
   {
       case CAN_6020_M1_ID:
@@ -116,7 +117,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
           static uint8_t i = 0;
           //get motor id
            i = rx_header.StdId - CAN_6020_M1_ID;
-          get_motor_measure(&motor_chassis[i], rx_data);
+          get_motor_measure(&motor_chassis[i+4], rx_data);
           // detect_hook(CHASSIS_MOTOR1_TOE + i);
           break;
       }

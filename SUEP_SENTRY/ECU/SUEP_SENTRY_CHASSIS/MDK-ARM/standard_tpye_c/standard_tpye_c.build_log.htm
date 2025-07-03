@@ -17,41 +17,21 @@ Library Manager: ArmAr.exe V5.06 update 7 (build 960)
 Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
 CPU DLL:         SARMCM3.DLL V5.36.0.0
 Dialog DLL:      DCM.DLL V1.17.3.0
-Target DLL:      UL2CM3.DLL V1.164.0.0
+Target DLL:      CMSIS_AGDI.dll V1.33.0.0
 Dialog DLL:      TCM.DLL V1.53.0.0
  
 <h2>Project:</h2>
-E:\RM_ECU_Develop\SENTRY\Development-Board-C-Examples\20.standard_robot\MDK-ARM\standard_robot.uvprojx
-Project File Date:  07/01/2025
+E:\RM_ECU_Develop\SUEP_SENTRY\ECU\SUEP_SENTRY_CHASSIS\MDK-ARM\standard_robot.uvprojx
+Project File Date:  07/03/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil5\ARM\ARMCC\Bin'
 Build target 'standard_robot'
-compiling AGV_Chassis.c...
-..\application\AGV_Chassis.h(68): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\application\AGV_Chassis_param.h(41): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\application\AGV_Chassis.c(77): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[0][0] =  AGV_InverseKinematics->AGV_Mov.vy - AGV_InverseKinematics->AGV_Mov.vz*arm_cos_f32(0.78539825f)*AGV_Chassis_Radius;
-..\application\AGV_Chassis.c(78): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[0][1] =  AGV_InverseKinematics->AGV_Mov.vx - AGV_InverseKinematics->AGV_Mov.vz*arm_sin_f32(0.78539825f)*AGV_Chassis_Radius;                                                         
-..\application\AGV_Chassis.c(81): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[1][0] =  AGV_InverseKinematics->AGV_Mov.vy - AGV_InverseKinematics->AGV_Mov.vz*arm_cos_f32(0.78539825f)*AGV_Chassis_Radius;
-..\application\AGV_Chassis.c(82): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[1][1] =  AGV_InverseKinematics->AGV_Mov.vx + AGV_InverseKinematics->AGV_Mov.vz*arm_sin_f32(0.78539825f)*AGV_Chassis_Radius;                                                         
-..\application\AGV_Chassis.c(85): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[2][0] =  AGV_InverseKinematics->AGV_Mov.vy + AGV_InverseKinematics->AGV_Mov.vz*arm_cos_f32(0.78539825f)*AGV_Chassis_Radius;
-..\application\AGV_Chassis.c(86): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[2][1] =  AGV_InverseKinematics->AGV_Mov.vx + AGV_InverseKinematics->AGV_Mov.vz*arm_sin_f32(0.78539825f)*AGV_Chassis_Radius;                                                         
-..\application\AGV_Chassis.c(89): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[3][0] =  AGV_InverseKinematics->AGV_Mov.vy + AGV_InverseKinematics->AGV_Mov.vz*arm_cos_f32(0.78539825f)*AGV_Chassis_Radius;
-..\application\AGV_Chassis.c(90): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      AGV_InverseKinematics->AGV_Mov.Sqrt[3][1] =  AGV_InverseKinematics->AGV_Mov.vx - AGV_InverseKinematics->AGV_Mov.vz*arm_sin_f32(0.78539825f)*AGV_Chassis_Radius;                                                         
-..\application\AGV_Chassis.c(106): error:  #167: argument of type "void (*)(AGV_Handle_Typedef *)" is incompatible with parameter of type "AGV_Handle_Typedef *"
-      AGV_InverseKinematics(AGV_Feedback_Update);
-..\application\AGV_Chassis.c: 10 warnings, 1 error
-"standard_tpye_c\standard_tpye_c.axf" - 1 Error(s), 10 Warning(s).
+compiling CAN_receive.c...
+linking...
+Program Size: Code=68812 RO-data=3552 RW-data=620 ZI-data=52268  
+FromELF: creating hex file...
+"standard_tpye_c\standard_tpye_c.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -74,8 +54,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.5.0
-Target not created.
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

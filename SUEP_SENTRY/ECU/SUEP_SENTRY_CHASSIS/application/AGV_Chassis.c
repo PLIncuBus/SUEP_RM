@@ -3,7 +3,95 @@
 #include "arm_math.h"
 #include "chassis_task.h"
 #include "user_lib.h"
+#include "CAN_receive.h"
 
+
+
+
+AGV_Handle_Typedef AGV_Handle;
+
+
+
+#define rc_deadband_limit(input, output, dealine)        \
+    {                                                    \
+        if ((input) > (dealine) || (input) < -(dealine)) \
+        {                                                \
+            (output) = (input);                          \
+        }                                                \
+        else                                             \
+        {                                                \
+            (output) = 0;                                \
+        }                                                \
+    }
+
+
+
+
+
+/**
+  * @brief          根据遥控器通道值，计算纵向和横移速度
+  *                 
+  * @param[out]     vx_set: 纵向速度指针
+  * @param[out]     vy_set: 横向速度指针
+  * @param[out]     chassis_move_rc_to_vector: "chassis_move" 变量指针
+  * @retval         none
+  */
+void AGV_chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set, AGV_Handle_Typedef *chassis_move_rc_to_vector)
+{
+    if (chassis_move_rc_to_vector == NULL || vx_set == NULL || vy_set == NULL)
+    {
+        return;
+    }
+    
+    int16_t vx_channel, vy_channel;
+    fp32 vx_set_channel, vy_set_channel;
+    //deadline, because some remote control need be calibrated,  the value of rocker is not zero in middle place,
+    //死区限制，因为遥控器可能存在差异 摇杆在中间，其值不为0
+    rc_deadband_limit(chassis_move_rc_to_vector->chassis_RC->rc.ch[CHASSIS_X_CHANNEL], vx_channel, CHASSIS_RC_DEADLINE);
+    rc_deadband_limit(chassis_move_rc_to_vector->chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], vy_channel, CHASSIS_RC_DEADLINE);
+
+    vx_set_channel = vx_channel * CHASSIS_VX_RC_SEN;
+    vy_set_channel = vy_channel * -CHASSIS_VY_RC_SEN;
+
+    // //keyboard set speed set-point
+    // //键盘控制
+    // if (chassis_move_rc_to_vector->chassis_RC->key.v & CHASSIS_FRONT_KEY)
+    // {
+    //     vx_set_channel = chassis_move_rc_to_vector->AGV_Mov.vx_max;
+    // }
+    // else if (chassis_move_rc_to_vector->chassis_RC->key.v & CHASSIS_BACK_KEY)
+    // {
+    //     vx_set_channel = chassis_move_rc_to_vector->AGV_Mov.vx_min;
+    // }
+
+    // if (chassis_move_rc_to_vector->chassis_RC->key.v & CHASSIS_LEFT_KEY)
+    // {
+    //     //vy_set_channel = chassis_move_rc_to_vector->vy_max;
+    // }
+    // else if (chassis_move_rc_to_vector->chassis_RC->key.v & CHASSIS_RIGHT_KEY)
+    // {
+    //     //vy_set_channel = chassis_move_rc_to_vector->vy_min;
+    // }
+
+    //first order low-pass replace ramp function, calculate chassis speed set-point to improve control performance
+    //一阶低通滤波代替斜波作为底盘速度输入
+    first_order_filter_cali(&chassis_move_rc_to_vector->AGV_Mov.chassis_cmd_slow_set_vx, vx_set_channel);
+    first_order_filter_cali(&chassis_move_rc_to_vector->AGV_Mov.chassis_cmd_slow_set_vy, vy_set_channel);
+    //stop command, need not slow change, set zero derectly
+    //停止信号，不需要缓慢加速，直接减速到零
+    if (vx_set_channel < CHASSIS_RC_DEADLINE * CHASSIS_VX_RC_SEN && vx_set_channel > -CHASSIS_RC_DEADLINE * CHASSIS_VX_RC_SEN)
+    {
+        chassis_move_rc_to_vector->AGV_Mov.chassis_cmd_slow_set_vx.out = 0.0f;
+    }
+
+    if (vy_set_channel < CHASSIS_RC_DEADLINE * CHASSIS_VY_RC_SEN && vy_set_channel > -CHASSIS_RC_DEADLINE * CHASSIS_VY_RC_SEN)
+    {
+        chassis_move_rc_to_vector->AGV_Mov.chassis_cmd_slow_set_vy.out = 0.0f;
+    }
+
+    *vx_set = chassis_move_rc_to_vector->AGV_Mov.chassis_cmd_slow_set_vx.out;
+    *vy_set = chassis_move_rc_to_vector->AGV_Mov.chassis_cmd_slow_set_vy.out;
+}
 
 
 /**

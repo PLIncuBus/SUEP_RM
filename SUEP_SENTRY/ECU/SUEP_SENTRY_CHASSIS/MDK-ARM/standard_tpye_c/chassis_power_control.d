@@ -8,6 +8,9 @@ standard_tpye_c\chassis_power_control.o: ..\components\controller\pid.h
 standard_tpye_c\chassis_power_control.o: ..\application\remote_control.h
 standard_tpye_c\chassis_power_control.o: ..\bsp\boards\bsp_rc.h
 standard_tpye_c\chassis_power_control.o: ..\components\algorithm\user_lib.h
+standard_tpye_c\chassis_power_control.o: ..\application\AGV_Chassis.h
+standard_tpye_c\chassis_power_control.o: ..\application\chassis_task.h
+standard_tpye_c\chassis_power_control.o: ..\application\INS_task.h
 standard_tpye_c\chassis_power_control.o: ../Inc/main.h
 standard_tpye_c\chassis_power_control.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 standard_tpye_c\chassis_power_control.o: ../Inc/stm32f4xx_hal_conf.h

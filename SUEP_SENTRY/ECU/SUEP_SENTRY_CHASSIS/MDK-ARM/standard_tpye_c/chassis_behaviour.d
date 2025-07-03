@@ -8,6 +8,9 @@ standard_tpye_c\chassis_behaviour.o: ..\components\controller\pid.h
 standard_tpye_c\chassis_behaviour.o: ..\application\remote_control.h
 standard_tpye_c\chassis_behaviour.o: ..\bsp\boards\bsp_rc.h
 standard_tpye_c\chassis_behaviour.o: ..\components\algorithm\user_lib.h
+standard_tpye_c\chassis_behaviour.o: ..\application\AGV_Chassis.h
+standard_tpye_c\chassis_behaviour.o: ..\application\chassis_task.h
+standard_tpye_c\chassis_behaviour.o: ..\application\INS_task.h
 standard_tpye_c\chassis_behaviour.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 standard_tpye_c\chassis_behaviour.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 standard_tpye_c\chassis_behaviour.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
