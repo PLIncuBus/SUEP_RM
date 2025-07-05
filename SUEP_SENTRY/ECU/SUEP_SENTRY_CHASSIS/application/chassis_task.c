@@ -94,7 +94,9 @@ void chassis_task(void const *pvParameters)
       AGV_SteerWheel_TargetAngle_Handle(&AGV_Handle);
       //就近原则处理
       AGV_RoundingToNearest_Handle(&AGV_Handle);
-      // Chassis_Cmd_Output();
+      //PID计算
+      AGV_PID_Cal(&AGV_Handle);
+      Chassis_Cmd_Output();
         
 
         //os delay
@@ -137,8 +139,8 @@ static void Chassis_Control_Cal(void)
       AGV_SteerWheel_TargetAngle_Handle(&AGV_Handle);
       //就近原则处理
       AGV_RoundingToNearest_Handle(&AGV_Handle);
-//      //PID计算
-//      AGV_PID_Cal(&AGV_Handle);
+     //PID计算
+     AGV_PID_Cal(&AGV_Handle);
 }
 
 /**

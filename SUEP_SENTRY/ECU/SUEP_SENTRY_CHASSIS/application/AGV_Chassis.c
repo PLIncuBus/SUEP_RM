@@ -283,7 +283,7 @@ void AGV_RoundingToNearest_Handle(AGV_Handle_Typedef *AGV_RoundingToNearest_Hand
   * @retval         none
   * @note           目标值 = 设置值 + 增量式 + 初始偏置
   * @note           +初始偏置
-  * @note           因为目标输出是增量式角度，所以需要做处理，使用的float(-2^23-2^23),无须担心补码的情况
+  * @note           因为目标输出是绝对式角度，所以需要做处理，使用的float(-2^23-2^23),无须担心补码的情况
   */
 void AGV_SteerWheel_TargetAngle_Handle(AGV_Handle_Typedef *AGV_SteerWheel_TargetAngle_Handle)
 {
@@ -319,9 +319,10 @@ void AGV_PID_Cal(AGV_Handle_Typedef *AGV_PID_Cal)
     //PID校准
     PID_calc(&AGV_PID_Cal->PropulsionWheel[i].pid,AGV_PID_Cal->PropulsionWheel[i].Velocity_Now,AGV_PID_Cal->PropulsionWheel[i].Velocity_Target);
     PID_calc(&AGV_PID_Cal->SteeringWheel[i].OutPid,AGV_PID_Cal->SteeringWheel[i].Angle_Now,AGV_PID_Cal->SteeringWheel[i].Angle_Target);
-    PID_calc(&AGV_PID_Cal->SteeringWheel[i].InnerPid,AGV_PID_Cal->SteeringWheel[i].Velocity_Now,AGV_PID_Cal->SteeringWheel[i].OutPid.out);
+    // PID_calc(&AGV_PID_Cal->SteeringWheel[i].InnerPid,AGV_PID_Cal->SteeringWheel[i].Velocity_Now,AGV_PID_Cal->SteeringWheel[i].OutPid.out);
     //赋值给电流值
-    AGV_PID_Cal->SteeringWheel[i].motor_info.give_current = (int16_t)(AGV_PID_Cal->SteeringWheel[i].InnerPid.out);
+    // AGV_PID_Cal->SteeringWheel[i].motor_info.give_current = (int16_t)(AGV_PID_Cal->SteeringWheel[i].InnerPid.out);
+    AGV_PID_Cal->SteeringWheel[i].motor_info.give_current = (int16_t)(AGV_PID_Cal->SteeringWheel[i].OutPid.out);
     AGV_PID_Cal->PropulsionWheel[i].motor_info.give_current = (int16_t)(AGV_PID_Cal->PropulsionWheel[i].pid.out);
     
 
