@@ -663,6 +663,16 @@
               <FileType>1</FileType>
               <FilePath>..\application\AGV_Chassis.c</FilePath>
             </File>
+            <File>
+              <FileName>UpperMonitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\application\UpperMonitor.c</FilePath>
+            </File>
+            <File>
+              <FileName>UpperMonitor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\application\UpperMonitor.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

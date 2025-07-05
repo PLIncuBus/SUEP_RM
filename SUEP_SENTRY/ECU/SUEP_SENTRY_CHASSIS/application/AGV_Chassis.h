@@ -76,7 +76,7 @@ typedef struct
 
 extern AGV_Handle_Typedef AGV_Handle;
 
-void AGV_chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set, AGV_Handle_Typedef *chassis_move_rc_to_vector);
+void AGV_chassis_rc_to_control_vector(AGV_Handle_Typedef *chassis_move_rc_to_vector);
 void AGV_Chassis_Init(AGV_Handle_Typedef *AGV_Chassis_Init);
 void AGV_InverseKinematics(AGV_Handle_Typedef *AGV_InverseKinematics);
 void AGV_SteerWheel_EcdToAngle_Handle(AGV_Handle_Typedef *AGV_SteerWheel_EcdToAngle_Handle);

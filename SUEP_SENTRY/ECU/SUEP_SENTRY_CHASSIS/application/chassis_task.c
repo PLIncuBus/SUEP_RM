@@ -47,8 +47,14 @@ uint32_t chassis_high_water;
 #endif
 
 
-
-
+//底盘参数初始化
+static void Chassis_Info_Init(void);
+//底盘数据更新
+static void Chassis_Data_Update(void);
+//底盘控制计算
+static void Chassis_Control_Cal(void);
+//底盘命令输出
+static void Chassis_Cmd_Output(void);
 
 /**
   * @brief          chassis task, osDelay CHASSIS_CONTROL_TIME_MS (2ms) 
@@ -65,7 +71,7 @@ void chassis_task(void const *pvParameters)
     //wait a time 
     //空闲一段时间
     vTaskDelay(CHASSIS_TASK_INIT_TIME);
-    AGV_Chassis_Init(&AGV_Handle);
+    Chassis_Info_Init();
     // //make sure all chassis motor is online,
     // //判断底盘电机是否都在线
     // while (toe_is_error(CHASSIS_MOTOR1_TOE) || toe_is_error(CHASSIS_MOTOR2_TOE) || toe_is_error(CHASSIS_MOTOR3_TOE) || toe_is_error(CHASSIS_MOTOR4_TOE) || toe_is_error(DBUS_TOE))
@@ -75,25 +81,21 @@ void chassis_task(void const *pvParameters)
 
     while (1)
     {  
-//      //channel value and keyboard value change to speed set-point, in general
-//      //遥控器的通道值以及键盘按键 得出 一般情况下的速度设定值
-//      AGV_chassis_rc_to_control_vector(&AGV_Handle.AGV_Mov.vx_set, &AGV_Handle.AGV_Mov.vy_set, &AGV_Handle);
+      //channel value and keyboard value change to speed set-point, in general
+      //遥控器的通道值以及键盘按键 得出 一般情况下的速度设定值
+      AGV_chassis_rc_to_control_vector(&AGV_Handle);
       //AGV参数反馈
       AGV_Feedback_Update(&AGV_Handle);
-//      //运动学逆结算
-//      AGV_InverseKinematics(&AGV_Handle);
-//      //AGV舵向电机编码器转角度处理
-//      AGV_SteerWheel_EcdToAngle_Handle(&AGV_Handle);
-//      //AGV舵向电机目标角度处理
-//      AGV_SteerWheel_TargetAngle_Handle(&AGV_Handle);
-//      //就近原则处理
-//      AGV_RoundingToNearest_Handle(&AGV_Handle);
-//      //PID计算
-//      AGV_PID_Cal(&AGV_Handle);
-//      CAN_cmd_steer(AGV_Handle.SteeringWheel[0].motor_info.give_current, AGV_Handle.SteeringWheel[1].motor_info.give_current,
-//                    AGV_Handle.SteeringWheel[2].motor_info.give_current, AGV_Handle.SteeringWheel[3].motor_info.give_current); 
-//      CAN_cmd_chassis(AGV_Handle.PropulsionWheel[0].motor_info.give_current,AGV_Handle.PropulsionWheel[1].motor_info.give_current,
-//                      AGV_Handle.PropulsionWheel[2].motor_info.give_current,AGV_Handle.PropulsionWheel[3].motor_info.give_current);          
+      //运动学逆结算
+      AGV_InverseKinematics(&AGV_Handle);
+      //AGV舵向电机编码器转角度处理
+      AGV_SteerWheel_EcdToAngle_Handle(&AGV_Handle);
+      //AGV舵向电机目标角度处理
+      AGV_SteerWheel_TargetAngle_Handle(&AGV_Handle);
+      //就近原则处理
+      AGV_RoundingToNearest_Handle(&AGV_Handle);
+      // Chassis_Cmd_Output();
+        
 
         //os delay
         //系统延时
@@ -106,3 +108,59 @@ void chassis_task(void const *pvParameters)
 }
 
 
+
+/**
+ * @brief       底盘命令输出
+ * @param[in]   //none
+ * @note        输出给电机
+ */
+static void Chassis_Cmd_Output(void)
+{
+     CAN_cmd_steer(AGV_Handle.SteeringWheel[0].motor_info.give_current, AGV_Handle.SteeringWheel[1].motor_info.give_current,
+                   AGV_Handle.SteeringWheel[2].motor_info.give_current, AGV_Handle.SteeringWheel[3].motor_info.give_current); 
+     CAN_cmd_chassis(AGV_Handle.PropulsionWheel[0].motor_info.give_current,AGV_Handle.PropulsionWheel[1].motor_info.give_current,
+                     AGV_Handle.PropulsionWheel[2].motor_info.give_current,AGV_Handle.PropulsionWheel[3].motor_info.give_current);  
+}
+
+/**
+ * @brief       底盘控制计算
+ * @param[in]   //none
+ * @note        数据处理
+ */
+static void Chassis_Control_Cal(void)
+{
+      //运动学逆结算
+      AGV_InverseKinematics(&AGV_Handle);
+      //AGV舵向电机编码器转角度处理
+      AGV_SteerWheel_EcdToAngle_Handle(&AGV_Handle);
+      //AGV舵向电机目标角度处理
+      AGV_SteerWheel_TargetAngle_Handle(&AGV_Handle);
+      //就近原则处理
+      AGV_RoundingToNearest_Handle(&AGV_Handle);
+//      //PID计算
+//      AGV_PID_Cal(&AGV_Handle);
+}
+
+/**
+ * @brief       底盘数据更新
+ * @param[in]   //none
+ * @note        数据更新
+ */
+static void Chassis_Data_Update(void)
+{
+      //channel value and keyboard value change to speed set-point, in general
+      //遥控器的通道值以及键盘按键 得出 一般情况下的速度设定值
+      AGV_chassis_rc_to_control_vector(&AGV_Handle);
+      //AGV参数反馈
+      AGV_Feedback_Update(&AGV_Handle);
+}
+
+/**
+ * @brief       底盘参数初始化
+ * @param[in]   //none
+ * @note        参数初始化
+ */
+static void Chassis_Info_Init(void)
+{
+      AGV_Chassis_Init(&AGV_Handle);
+}
