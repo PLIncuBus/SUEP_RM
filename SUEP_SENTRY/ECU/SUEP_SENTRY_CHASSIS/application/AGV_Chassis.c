@@ -51,7 +51,7 @@ void AGV_chassis_rc_to_control_vector(AGV_Handle_Typedef *chassis_move_rc_to_vec
     rc_deadband_limit(chassis_move_rc_to_vector->chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], vy_channel, CHASSIS_RC_DEADLINE);
 
     vx_set_channel = vx_channel * CHASSIS_VX_RC_SEN;
-    vy_set_channel = vy_channel * -CHASSIS_VY_RC_SEN;
+    vy_set_channel = vy_channel * CHASSIS_VY_RC_SEN;
 
     // //keyboard set speed set-point
     // //键盘控制
@@ -115,9 +115,9 @@ void AGV_Chassis_Init(AGV_Handle_Typedef *AGV_Chassis_Init)
     AGV_Chassis_Init->SteeringWheel[2].Angle_Bias = AGV_Chassis_SteeringWheel3_Bias;
     AGV_Chassis_Init->SteeringWheel[3].Angle_Bias = AGV_Chassis_SteeringWheel4_Bias;
 
-    AGV_Chassis_Init->PropulsionWheel[0].direction = -1;
+    AGV_Chassis_Init->PropulsionWheel[0].direction = 1;
     AGV_Chassis_Init->PropulsionWheel[1].direction = -1;
-    AGV_Chassis_Init->PropulsionWheel[2].direction = 1;
+    AGV_Chassis_Init->PropulsionWheel[2].direction = -1;
     AGV_Chassis_Init->PropulsionWheel[3].direction = 1;
 
     AGV_Chassis_Init->SteeringWheel[0].turn_flg = 0;
@@ -177,13 +177,13 @@ void AGV_Feedback_Update(AGV_Handle_Typedef *AGV_Feedback_Update)
 void AGV_InverseKinematics(AGV_Handle_Typedef *AGV_InverseKinematics)
 {
     //角度逆解算
-    AGV_InverseKinematics->SteeringWheel[0].Angle_Set = atan2((AGV_InverseKinematics->AGV_Mov.vy_set-AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
+    AGV_InverseKinematics->SteeringWheel[0].Angle_Set_Radian = atan2((AGV_InverseKinematics->AGV_Mov.vy_set-AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
                                                                    (AGV_InverseKinematics->AGV_Mov.vx_set-AGV_InverseKinematics->AGV_Mov.vz_set*arm_sin_f32(0.78539825f)));
-    AGV_InverseKinematics->SteeringWheel[1].Angle_Set = atan2((AGV_InverseKinematics->AGV_Mov.vy_set-AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
+    AGV_InverseKinematics->SteeringWheel[1].Angle_Set_Radian = atan2((AGV_InverseKinematics->AGV_Mov.vy_set-AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
                                                                    (AGV_InverseKinematics->AGV_Mov.vx_set+AGV_InverseKinematics->AGV_Mov.vz_set*arm_sin_f32(0.78539825f)));
-    AGV_InverseKinematics->SteeringWheel[2].Angle_Set = atan2((AGV_InverseKinematics->AGV_Mov.vy_set+AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
+    AGV_InverseKinematics->SteeringWheel[2].Angle_Set_Radian = atan2((AGV_InverseKinematics->AGV_Mov.vy_set+AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
                                                                    (AGV_InverseKinematics->AGV_Mov.vx_set+AGV_InverseKinematics->AGV_Mov.vz_set*arm_sin_f32(0.78539825f)));
-    AGV_InverseKinematics->SteeringWheel[3].Angle_Set = atan2((AGV_InverseKinematics->AGV_Mov.vy_set+AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
+    AGV_InverseKinematics->SteeringWheel[3].Angle_Set_Radian = atan2((AGV_InverseKinematics->AGV_Mov.vy_set+AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)),
                                                                    (AGV_InverseKinematics->AGV_Mov.vx_set-AGV_InverseKinematics->AGV_Mov.vz_set*arm_sin_f32(0.78539825f))); 
     //线速度逆结算    
     AGV_InverseKinematics->AGV_Mov.Sqrt[0][0] =  AGV_InverseKinematics->AGV_Mov.vy_set - AGV_InverseKinematics->AGV_Mov.vz_set*arm_cos_f32(0.78539825f)*AGV_Chassis_Radius;
@@ -211,7 +211,7 @@ void AGV_InverseKinematics(AGV_Handle_Typedef *AGV_InverseKinematics)
   * @brief          AGV舵向电机编码器转角度处理
   * @param[out]     //AGV_Handle_Typedef *AGV_SteerWheel_EcdToAngle_Handle
   * @retval         none
-  * @note           当前角度 = 当前角度值 + 增量式 +初始偏置
+  * @note           当前角度 = 当前角度值 + 绝对式 +初始偏置
   * @note           因为回传的是增量式角度，所以需要做处理，使用的float(-2^23-2^23),无须担心补码的情况
   */
 void AGV_SteerWheel_EcdToAngle_Handle(AGV_Handle_Typedef *AGV_SteerWheel_EcdToAngle_Handle)
@@ -227,7 +227,7 @@ void AGV_SteerWheel_EcdToAngle_Handle(AGV_Handle_Typedef *AGV_SteerWheel_EcdToAn
       {
         AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Round_Cnt_Now ++;
       }
-      AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Angle_Now = AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Round_Cnt_Now*360 + AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Ecd_Now + AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Angle_Bias;
+      AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Angle_Now = AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Round_Cnt_Now*360 + AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Ecd_Now ;//+ AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Angle_Bias
       AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Ecd_Last = AGV_SteerWheel_EcdToAngle_Handle->SteeringWheel[i].Ecd_Now; 
   }
 }
@@ -241,36 +241,40 @@ void AGV_RoundingToNearest_Handle(AGV_Handle_Typedef *AGV_RoundingToNearest_Hand
 {
   for(uint8_t i = 0;i < 4;i ++)
   {
-      if(AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand - AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_Last > 180)
+      if(AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand - AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_Last > 90)
       {
-        AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg = 1;
+        AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg = 1;        
+				AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target =  AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand - 180;
+        AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Target = - AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Set;
       }
-      else if(AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand - AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_Last < -180)
+      else if(AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand - AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_Last < -90)
       {
-        AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg = -1;
+        AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg = -1;        
+				AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target =  AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand + 180;
+        AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Target = - AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Set;
       }
       else 
       {
-        AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg = 0;
-      }
-
-
-      if(AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg == 1)
-      {
-        AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target =  AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand - 360;
-        AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Target = - AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Set;
-
-      }
-      else if(AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg == -1)
-      {
-        AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target =  AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand + 360;
-        AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Target = - AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Set;
-      }
-      else if(AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg == 0)
-      {
-        AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target =  AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand;
+        AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg = 0;        
+				AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target =  AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_beforehand;
         AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Target = AGV_RoundingToNearest_Handle->PropulsionWheel[i].Velocity_Set;
       }
+
+
+
+//      if(AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg == 1)
+//      {
+
+
+//      }
+//      else if(AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg == -1)
+//      {
+
+//      }
+//      else if(AGV_RoundingToNearest_Handle->SteeringWheel[i].turn_flg == 0)
+//      {
+
+//      }
 
       AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target_Last = AGV_RoundingToNearest_Handle->SteeringWheel[i].Angle_Target;  
   }
@@ -281,7 +285,7 @@ void AGV_RoundingToNearest_Handle(AGV_Handle_Typedef *AGV_RoundingToNearest_Hand
   * @brief          AGV舵向电机目标角度处理
   * @param[out]     //AGV_Handle_Typedef *AGV_SteerWheel_TargetAngle_Handle
   * @retval         none
-  * @note           目标值 = 设置值 + 增量式 + 初始偏置
+  * @note           目标值 = 设置值 + 绝对式 + 初始偏置
   * @note           +初始偏置
   * @note           因为目标输出是绝对式角度，所以需要做处理，使用的float(-2^23-2^23),无须担心补码的情况
   */
@@ -289,6 +293,8 @@ void AGV_SteerWheel_TargetAngle_Handle(AGV_Handle_Typedef *AGV_SteerWheel_Target
 {
     for(uint8_t i = 0;i < 4;i ++)
     {
+        //先转成角度制
+        AGV_SteerWheel_TargetAngle_Handle->SteeringWheel[i].Angle_Set = AGV_SteerWheel_TargetAngle_Handle->SteeringWheel[i].Angle_Set_Radian * RADIAN_TO_DEGREE;
         if(AGV_SteerWheel_TargetAngle_Handle->SteeringWheel[i].Angle_Target_Last - AGV_SteerWheel_TargetAngle_Handle->SteeringWheel[i].Angle_Set > 180)
         {
           AGV_SteerWheel_TargetAngle_Handle->SteeringWheel[i].Round_Cnt_Target --;

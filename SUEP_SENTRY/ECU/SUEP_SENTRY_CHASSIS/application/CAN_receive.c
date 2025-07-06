@@ -149,7 +149,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
 void CAN_cmd_steer(int16_t steer1, int16_t steer2, int16_t steer3, int16_t steer4)
 {
     uint32_t send_mail_box;
-    steer_tx_message.StdId = CAN_6020_M1_ID - 1;
+    steer_tx_message.StdId = 0x1FF;
     steer_tx_message.IDE = CAN_ID_STD;
     steer_tx_message.RTR = CAN_RTR_DATA;
     steer_tx_message.DLC = 0x08;

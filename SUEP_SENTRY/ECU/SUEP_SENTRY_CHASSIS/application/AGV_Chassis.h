@@ -24,6 +24,7 @@ typedef struct
     float Angle_Target;
     float Angle_Target_beforehand;
     float Angle_Target_Last;
+    float Angle_Set_Radian;
     float Angle_Set;
     float Angle_Now;
     float Velocity_Now;
