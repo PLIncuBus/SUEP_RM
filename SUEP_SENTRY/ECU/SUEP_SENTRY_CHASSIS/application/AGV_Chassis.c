@@ -205,11 +205,31 @@ void AGV_InverseKinematics(AGV_Handle_Typedef *AGV_InverseKinematics)
     AGV_InverseKinematics->AGV_Mov.Sqrt[3][1] =  AGV_InverseKinematics->AGV_Mov.vx_set - AGV_InverseKinematics->AGV_Mov.vz_set*arm_sin_f32(0.78539825f)*AGV_Chassis_Radius;                                                         
     arm_sqrt_f32(AGV_InverseKinematics->AGV_Mov.Sqrt[3][0]*AGV_InverseKinematics->AGV_Mov.Sqrt[3][0] + AGV_InverseKinematics->AGV_Mov.Sqrt[3][1]*AGV_InverseKinematics->AGV_Mov.Sqrt[3][1],&AGV_InverseKinematics->PropulsionWheel[3].Velocity_Set); 
     AGV_InverseKinematics->PropulsionWheel[3].Velocity_Set = AGV_InverseKinematics->PropulsionWheel[3].Velocity_Set*AGV_InverseKinematics->PropulsionWheel[3].direction;
+
+
+    
+}
+/**
+ * @brief           将AGV局部坐标系转换为全局坐标系
+ * @param[in]         
+ */
+void AGV_Axis_Converse_Handle(AGV_Handle_Typedef *AGV_Axis_Converse_Handle)
+{
+  float yaw,local_vx_set,local_vy_set;
+  //转换为角度制
+  yaw = *AGV_Axis_Converse_Handle->chassis_INS_angle;
+  local_vx_set = AGV_Axis_Converse_Handle->AGV_Mov.vx_set;
+  local_vy_set = AGV_Axis_Converse_Handle->AGV_Mov.vy_set;
+  for(uint8_t i = 0;i < 4;i ++)
+  {
+    AGV_Axis_Converse_Handle->AGV_Mov.vx_set =  local_vx_set * arm_cos_f32(yaw) - local_vy_set * arm_sin_f32(yaw);
+    AGV_Axis_Converse_Handle->AGV_Mov.vy_set =  local_vx_set * arm_cos_f32(yaw) + local_vy_set * arm_sin_f32(yaw);
+  } 
 }
 
 /**
   * @brief          AGV舵向电机编码器转角度处理
-  * @param[out]     //AGV_Handle_Typedef *AGV_SteerWheel_EcdToAngle_Handle
+  * @param[in]     //AGV_Handle_Typedef *AGV_SteerWheel_EcdToAngle_Handle
   * @retval         none
   * @note           当前角度 = 当前角度值 + 绝对式 +初始偏置
   * @note           因为回传的是增量式角度，所以需要做处理，使用的float(-2^23-2^23),无须担心补码的情况

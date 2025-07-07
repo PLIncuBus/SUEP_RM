@@ -85,7 +85,7 @@ void AGV_RoundingToNearest_Handle(AGV_Handle_Typedef *AGV_RoundingToNearest_Hand
 void AGV_SteerWheel_TargetAngle_Handle(AGV_Handle_Typedef *AGV_SteerWheel_TargetAngle_Handle);
 void AGV_PID_Cal(AGV_Handle_Typedef *AGV_PID_Cal);
 void AGV_Feedback_Update(AGV_Handle_Typedef *AGV_Feedback_Update);
-
+void AGV_Axis_Converse_Handle(AGV_Handle_Typedef *AGV_Axis_Converse_Handle);
 
 
 #endif

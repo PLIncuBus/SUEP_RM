@@ -86,6 +86,8 @@ void chassis_task(void const *pvParameters)
       AGV_chassis_rc_to_control_vector(&AGV_Handle);
       //AGV参数反馈
       AGV_Feedback_Update(&AGV_Handle);
+      //局部坐标系转全局坐标系
+      AGV_Axis_Converse_Handle(&AGV_Handle);
       //运动学逆结算
       AGV_InverseKinematics(&AGV_Handle);
       //AGV舵向电机编码器转角度处理
